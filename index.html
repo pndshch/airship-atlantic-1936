@@ -4,318 +4,366 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>エアシップ・アトランティック 1936 | Pinda Lab</title>
-<meta name="description" content="ヒンデンブルク号の大西洋横断初飛行。雲の中の郵便袋を集めよう。">
+<meta name="description" content="1936年ヒンデンブルク号大西洋初横断・3D飛行アクション。雲の中の郵便袋を集めて雷雲を避けろ。">
 <meta property="og:title" content="Airship Atlantic 1936">
-<meta property="og:description" content="Hindenburg first transatlantic 1936. Grab the mailbags in the clouds.">
-<meta name="twitter:card" content="summary">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html, body { width:100%; height:100%; overflow:hidden; background:#0d1117; color:#e6edf3; font-family:'Hiragino Maru Gothic ProN', system-ui, sans-serif; user-select:none; }
-#scene { position:fixed; inset:0; }
-.hud { position:fixed; top:12px; left:12px; right:12px; display:flex; justify-content:space-between; align-items:flex-start; pointer-events:none; z-index:5; }
-.badge { background:rgba(13,17,23,0.7); border:1px solid #30363d; border-radius:10px; padding:8px 14px; backdrop-filter:blur(6px); }
-.badge .lbl { font-size:10px; color:#8b949e; letter-spacing:1px; text-transform:uppercase; font-family:system-ui,sans-serif; }
-.badge .val { font-size:22px; font-weight:800; font-variant-numeric:tabular-nums; }
-.title-bar { position:fixed; bottom:14px; left:0; right:0; text-align:center; pointer-events:none; z-index:5; }
-.title-bar h1 { font-size:18px; font-weight:800; }
-.title-bar .sub { font-size:11px; color:#8b949e; margin-top:2px; font-family:system-ui,sans-serif; }
-.lang-switch { position:fixed; top:12px; right:12px; display:flex; gap:2px; background:rgba(22,27,34,0.9); border:1px solid #30363d; border-radius:8px; padding:3px; z-index:10; pointer-events:auto; }
-.lang-btn { background:transparent; border:none; color:#7d8590; font-size:11px; font-weight:600; padding:4px 8px; border-radius:5px; cursor:pointer; font-family:system-ui,sans-serif; }
-.lang-btn.active { background:#60a5fa; color:#0d1117; }
-.help { position:fixed; bottom:80px; left:0; right:0; text-align:center; color:#8b949e; font-size:12px; pointer-events:none; z-index:5; opacity:0.85; }
-.banner { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(13,17,23,0.92); border:1px solid #60a5fa; border-radius:16px; padding:24px 32px; text-align:center; z-index:20; min-width:260px; }
-.banner .big { font-size:30px; font-weight:800; color:#60a5fa; }
-.banner .small { font-size:13px; color:#8b949e; margin-top:6px; line-height:1.6; }
-.banner button { margin-top:14px; background:#60a5fa; color:#0d1117; border:none; padding:8px 22px; border-radius:8px; font-weight:800; font-size:14px; cursor:pointer; font-family:inherit; }
-.hidden { display:none !important; }
-.toast { position:fixed; left:50%; top:30%; transform:translate(-50%,-50%); background:#60a5fa; color:#0d1117; padding:6px 14px; border-radius:14px; font-weight:800; font-size:18px; pointer-events:none; opacity:0; transition:opacity 0.2s, top 0.4s; z-index:15; }
-.toast.show { opacity:1; top:24%; }
-.foot { position:fixed; bottom:6px; right:10px; font-size:10px; color:#484f58; font-family:system-ui,sans-serif; z-index:5; }
-.foot a { color:#7d8590; text-decoration:none; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a1530;color:#dbeafe;font-family:'Hiragino Maru Gothic ProN',system-ui,sans-serif;user-select:none}
+#scene{position:fixed;inset:0}
+.hud{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;pointer-events:none;z-index:5;gap:10px;flex-wrap:wrap}
+.badge{background:rgba(13,17,23,0.6);border:1px solid #60a5fa;border-radius:10px;padding:8px 14px;backdrop-filter:blur(6px)}
+.badge .lbl{font-size:10px;color:#60a5fa;letter-spacing:1px;text-transform:uppercase;font-family:system-ui,sans-serif}
+.badge .val{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;color:#dbeafe}
+.combo{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:42px;font-weight:900;color:#a78bfa;text-shadow:0 0 16px #a78bfa;opacity:0;transition:opacity .2s, top .4s;pointer-events:none;z-index:8}
+.combo.show{opacity:1;top:42%}
+.help{position:fixed;bottom:88px;left:0;right:0;text-align:center;color:#dbeafe;font-size:13px;pointer-events:none;z-index:5;opacity:0.85}
+.controls{position:fixed;bottom:14px;left:0;right:0;display:flex;justify-content:center;gap:10px;pointer-events:auto;z-index:6}
+.cbtn{width:60px;height:60px;background:rgba(96,165,250,0.18);border:2px solid #60a5fa;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#dbeafe;font-size:22px;font-weight:800;cursor:pointer;backdrop-filter:blur(8px);font-family:system-ui,sans-serif;touch-action:manipulation}
+.cbtn:active{background:rgba(96,165,250,0.45)}
+.banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(13,17,23,0.95);border:2px solid #60a5fa;border-radius:16px;padding:24px 32px;text-align:center;z-index:20;min-width:280px;max-width:90vw}
+.banner .big{font-size:36px;font-weight:900;color:#60a5fa}
+.banner .label{font-size:12px;color:#93c5fd;letter-spacing:2px;text-transform:uppercase;font-family:system-ui,sans-serif;margin-bottom:6px}
+.banner .small{font-size:13px;color:#a8b3c4;margin-top:8px;line-height:1.6}
+.banner .stats{display:flex;justify-content:space-around;margin:14px 0;gap:18px}
+.banner .stats div{font-size:11px;color:#93c5fd;letter-spacing:1px}
+.banner .stats div b{display:block;font-size:22px;color:#dbeafe;font-weight:900;margin-top:2px}
+.banner button{margin-top:14px;background:#60a5fa;color:#0a1530;border:none;padding:10px 28px;border-radius:8px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit}
+.hidden{display:none !important}
+.lang-switch{position:fixed;top:14px;right:14px;display:flex;gap:2px;background:rgba(22,27,34,0.9);border:1px solid #60a5fa;border-radius:8px;padding:3px;z-index:10}
+.lang-btn{background:transparent;border:none;color:#7d8590;font-size:11px;font-weight:600;padding:4px 8px;border-radius:5px;cursor:pointer;font-family:system-ui,sans-serif}
+.lang-btn.active{background:#60a5fa;color:#0a1530}
+.foot{position:fixed;bottom:6px;right:10px;font-size:10px;color:#7d8590;font-family:system-ui,sans-serif;z-index:5}
+.foot a{color:#93c5fd;text-decoration:none}
+.progress{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);width:80%;max-width:380px;height:6px;background:rgba(96,165,250,0.15);border-radius:3px;border:1px solid rgba(96,165,250,0.4);z-index:5;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#60a5fa,#a78bfa);width:0%;transition:width .3s}
+.progress-label{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);font-size:10px;color:#93c5fd;letter-spacing:2px;text-transform:uppercase;font-family:system-ui,sans-serif;z-index:5}
+@media (min-width:720px){.controls{display:none}}
 </style>
 </head>
 <body>
 <canvas id="scene"></canvas>
 <div class="hud">
-    <div class="badge"><div class="lbl" data-i18n="score">SCORE</div><div class="val" id="score">0</div></div>
-    <div class="badge"><div class="lbl" data-i18n="time">TIME</div><div class="val" id="time">30</div></div>
+    <div class="badge"><div class="lbl" data-i18n="mail">郵便</div><div class="val" id="score">0</div></div>
+    <div class="badge"><div class="lbl" data-i18n="hp">機体</div><div class="val" id="hp">3</div></div>
+</div>
+<div class="combo" id="combo"></div>
+<div class="progress-label" data-i18n="lakehurst">→ LAKEHURST, NJ</div>
+<div class="progress"><div class="progress-fill" id="prog"></div></div>
+<div class="help" id="help" data-i18n="help">↑↓/W・S/タップで上下 · 雲の中の郵便袋を回収</div>
+<div class="controls">
+    <button class="cbtn" id="btnUp">▲</button>
+    <button class="cbtn" id="btnDn">▼</button>
+</div>
+<div class="banner hidden" id="banner">
+    <div class="label" data-i18n="result">航海終了</div>
+    <div class="big" id="bannerBig">0</div>
+    <div class="stats">
+        <div data-i18n="mailS">郵便<b id="sMail">0</b></div>
+        <div data-i18n="distanceS">航行<b id="sDist">0%</b></div>
+        <div data-i18n="bestS">ベスト<b id="sBest">0</b></div>
+    </div>
+    <div class="small" id="resultMsg" data-i18n="bannerSub">90年前 — 1936年 ヒンデンブルク号大西洋初横断</div>
+    <button id="restart" data-i18n="replay">もう一度</button>
 </div>
 <div class="lang-switch">
     <button class="lang-btn active" data-lang="ja">JP</button>
     <button class="lang-btn" data-lang="en">EN</button>
 </div>
-<div class="help" id="help" data-i18n="help">郵便袋をタップで回収</div>
-<div class="title-bar">
-    <h1 data-i18n="titleBar">エアシップ・アトランティック 1936</h1>
-    <div class="sub" data-i18n="sub">90年前 · 1936 · 大西洋初飛行</div>
-</div>
-<div class="toast" id="toast"></div>
-<div class="banner hidden" id="banner">
-    <div class="big" id="bannerBig">+1</div>
-    <div class="small" id="bannerSmall" data-i18n="bannerSmall">届けた郵便袋</div>
-    <button id="restart" data-i18n="restart">もう一度</button>
-</div>
 <div class="foot"><a href="https://pndshch.github.io/" target="_blank">← Pinda Lab</a></div>
 
-<script>
-window.__GAME_CFG__ = {"bg1": "#0a1530", "bg2": "#1e3a8a", "accent": "#60a5fa", "glb": "scene.glb", "spawnTypes": [{"name": "mail", "score": 1, "tint": "#a78bfa"}], "duration": 30, "modelSize": 2.4, "spawnInterval": 0.7};
-window.__I18N__ = {"ja": {"score": "スコア", "time": "残り時間", "help": "郵便袋をタップで回収", "titleBar": "エアシップ・アトランティック 1936", "sub": "90年前 · 1936 · 大西洋初飛行", "bannerSmall": "届けた郵便袋", "restart": "もう一度"}, "en": {"score": "SCORE", "time": "TIME", "help": "Tap mailbags to collect", "titleBar": "Airship Atlantic 1936", "sub": "90yrs ago · 1936 · First Atlantic crossing", "bannerSmall": "Mailbags delivered", "restart": "Replay"}};
-</script>
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
-  }
-}
-</script>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.161.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.161.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// ================ GAME CONFIG (overridden per game) ================
-const CFG = window.__GAME_CFG__ || {
-    bg1: '#0d1117', bg2: '#1a2236', accent: '#34d399',
-    glb: 'scene.glb', spawnTypes: [{name:'mob', score:1}],
-    duration: 30,
+const I18N = {
+    ja:{mail:'郵便',hp:'機体',help:'↑↓/W・S/画面タップで上下移動 · 郵便袋を回収、雷雲を避けろ',
+        result:'航海終了',mailS:'届けた郵便',distanceS:'航行率',bestS:'ベスト',
+        bannerSub:'90年前 — 1936年 ヒンデンブルク号 大西洋初横断',replay:'もう一度',
+        lakehurst:'→ NJ ラクハースト',gold:'GOLD!',crash:'雷雲に被弾...',arrived:'NJ到着!',damage:'機体被弾'},
+    en:{mail:'MAIL',hp:'HULL',help:'↑↓/W·S/Tap to climb·dive · Catch mailbags, dodge thunder',
+        result:'VOYAGE END',mailS:'MAIL DELIVERED',distanceS:'VOYAGE',bestS:'BEST',
+        bannerSub:'90yrs ago — 1936 Hindenburg first transatlantic crossing',replay:'Replay',
+        lakehurst:'→ LAKEHURST, NJ',gold:'GOLD!',crash:'Storm damage...',arrived:'Arrived NJ!',damage:'Hull hit'}
 };
 
-const I18N = window.__I18N__ || { ja:{}, en:{} };
-
-// ================ THREE.js setup ================
 const canvas = document.getElementById('scene');
-const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 
 const scene = new THREE.Scene();
-const bg = new THREE.Color(CFG.bg1);
-scene.background = bg;
-scene.fog = new THREE.Fog(CFG.bg2, 18, 60);
+scene.fog = new THREE.Fog('#1e3a8a', 30, 90);
 
-const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 200);
-camera.position.set(0, 4, 12);
-camera.lookAt(0, 1, 0);
+// Sky gradient (vertex colors)
+const skyGeo = new THREE.SphereGeometry(120, 32, 16);
+const skyMat = new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite:false,
+    uniforms:{ topColor:{value:new THREE.Color('#1e3a8a')}, bottomColor:{value:new THREE.Color('#fb923c')}, offset:{value:30}, expo:{value:0.6} },
+    vertexShader:'varying vec3 vWorldPosition;void main(){vec4 wp=modelMatrix*vec4(position,1.0);vWorldPosition=wp.xyz;gl_Position=projectionMatrix*viewMatrix*wp;}',
+    fragmentShader:'uniform vec3 topColor;uniform vec3 bottomColor;uniform float offset;uniform float expo;varying vec3 vWorldPosition;void main(){float h=normalize(vWorldPosition+vec3(0.0,offset,0.0)).y;gl_FragColor=vec4(mix(bottomColor,topColor,max(pow(max(h,0.0),expo),0.0)),1.0);}'
+});
+const sky = new THREE.Mesh(skyGeo, skyMat);
+scene.add(sky);
 
-// Lighting
-scene.add(new THREE.HemisphereLight(0xffffff, 0x202030, 0.6));
-const sun = new THREE.DirectionalLight(0xffffff, 1.1);
-sun.position.set(5, 10, 7);
-sun.castShadow = true;
-sun.shadow.mapSize.set(1024,1024);
-sun.shadow.camera.left = -15; sun.shadow.camera.right=15;
-sun.shadow.camera.top=15; sun.shadow.camera.bottom=-15;
+scene.add(new THREE.HemisphereLight(0xffe0c0, 0x102050, 0.55));
+const sun = new THREE.DirectionalLight(0xfff0c0, 1.4);
+sun.position.set(20, 10, -20); sun.castShadow = true;
 scene.add(sun);
 
-// Ground
-const ground = new THREE.Mesh(
-    new THREE.CircleGeometry(40, 48),
-    new THREE.MeshStandardMaterial({color: new THREE.Color(CFG.bg2).lerp(new THREE.Color('#000'), 0.4), roughness:0.9})
-);
-ground.rotation.x = -Math.PI/2;
-ground.receiveShadow = true;
-scene.add(ground);
+// Ocean far below
+const oceanMat = new THREE.MeshStandardMaterial({color:'#0a2b50', roughness:0.5, metalness:0.6});
+const ocean = new THREE.Mesh(new THREE.PlaneGeometry(200, 600), oceanMat);
+ocean.rotation.x = -Math.PI/2; ocean.position.set(0, -8, -200);
+scene.add(ocean);
 
-// Decorative ring
-const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(8, 0.08, 8, 64),
-    new THREE.MeshStandardMaterial({color: CFG.accent, emissive: CFG.accent, emissiveIntensity:0.5})
-);
-ring.rotation.x = -Math.PI/2;
-ring.position.y = 0.05;
-scene.add(ring);
+// Sun visual (huge orange disc on horizon)
+const sunDisc = new THREE.Mesh(new THREE.CircleGeometry(8, 32), new THREE.MeshBasicMaterial({color:'#ffb84d'}));
+sunDisc.position.set(20, 4, -85); sunDisc.lookAt(0, 4, 0); scene.add(sunDisc);
 
-// ================ Load glb model ================
-let modelTemplate = null;
-const loader = new GLTFLoader();
-loader.load(CFG.glb, (g)=>{
-    modelTemplate = g.scene;
-    modelTemplate.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; }});
-    // normalize size
-    const box = new THREE.Box3().setFromObject(modelTemplate);
-    const size = box.getSize(new THREE.Vector3());
-    const maxDim = Math.max(size.x, size.y, size.z);
-    const targetSize = CFG.modelSize || 1.6;
-    if(maxDim > 0) modelTemplate.scale.multiplyScalar(targetSize / maxDim);
-    // center bottom on origin
-    const box2 = new THREE.Box3().setFromObject(modelTemplate);
-    const c = box2.getCenter(new THREE.Vector3());
-    modelTemplate.position.x -= c.x; modelTemplate.position.z -= c.z;
-    modelTemplate.position.y -= box2.min.y;
-    startGame();
-}, undefined, (err)=>{
-    console.warn('glb load failed, using fallback', err);
-    modelTemplate = makeFallbackMesh();
-    startGame();
-});
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 300);
+camera.position.set(0, 2, 9);
+camera.lookAt(0, 1, 0);
 
-function makeFallbackMesh(){
+let airship, mailbag, goldmail, cloudP, stormP, ship;
+let ready = false;
+
+function makeProto(root, key){
+    let f = null;
+    root.traverse(o=>{ if(!f && o.isMesh && o.name && o.name.startsWith(key)) f = o; });
+    if(!f) return null;
     const g = new THREE.Group();
-    const mat = new THREE.MeshStandardMaterial({color: CFG.accent});
-    const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.8, 0), mat);
-    m.castShadow = true; m.receiveShadow = true;
-    g.add(m);
-    return g;
+    const c = f.clone();
+    if(c.material) c.material = c.material.clone();
+    c.position.set(0,0,0); c.rotation.set(0,0,0);
+    c.castShadow = true; c.receiveShadow = true;
+    g.add(c); return g;
 }
 
-// ================ Game state ================
-let mobs = []; // {root, type, vy, life}
-let score = 0;
-let timeLeft = CFG.duration;
-let gameRunning = false;
-let lastSpawn = 0;
-const clock = new THREE.Clock();
+new GLTFLoader().load('scene.glb', (g)=>{
+    g.scene.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; }});
+    airship  = makeProto(g.scene, 'airship');
+    mailbag  = makeProto(g.scene, 'mailbag');
+    goldmail = makeProto(g.scene, 'goldmail');
+    cloudP   = makeProto(g.scene, 'cloud');
+    stormP   = makeProto(g.scene, 'storm');
+    ship     = makeProto(g.scene, 'ship');
+    if(airship) initAirship(); else initFallback();
+    populateBackdrop();
+    ready = true;
+}, undefined, (e)=>{ console.error(e); ready=true; initFallback(); });
+
+let shipObj=null, targetY=2;
+function initAirship(){
+    shipObj = airship.clone(true);
+    shipObj.position.set(-1, 2, 0);
+    shipObj.scale.setScalar(0.85);
+    scene.add(shipObj);
+}
+function initFallback(){
+    const g = new THREE.Group();
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 8), new THREE.MeshStandardMaterial({color:'#cccccc'}));
+    m.scale.set(2.5, 1, 1); g.add(m); shipObj = g; shipObj.position.set(-1,2,0); scene.add(shipObj);
+}
+
+const backdrop = [];
+function populateBackdrop(){
+    if(cloudP){
+        for(let i=0;i<12;i++){
+            const c = cloudP.clone(true);
+            c.position.set(-30+Math.random()*60, 1+Math.random()*7, -40 - Math.random()*200);
+            c.scale.setScalar(0.8 + Math.random()*1.4);
+            scene.add(c); backdrop.push({mesh:c, type:'cloud'});
+        }
+    }
+    if(ship){
+        for(let i=0;i<3;i++){
+            const s = ship.clone(true);
+            s.position.set(-25 + Math.random()*50, -7, -100 - Math.random()*180);
+            s.scale.setScalar(2);
+            scene.add(s); backdrop.push({mesh:s, type:'ship'});
+        }
+    }
+}
+
+const STATE = { score:0, hp:3, distance:0, total:1000, running:false, time:0, gameOver:false, comboCount:0 };
+let mobs = [];
 
 function spawnMob(){
-    if(!modelTemplate) return;
-    const mob = modelTemplate.clone(true);
-    mob.traverse(o=>{ if(o.isMesh){ o.material = o.material.clone(); }});
-    // randomize tint per type if multiple types
-    const t = CFG.spawnTypes[Math.floor(Math.random()*CFG.spawnTypes.length)];
-    if(t.tint){
-        mob.traverse(o=>{ if(o.isMesh && o.material.color){ o.material.color.set(t.tint); }});
-    }
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 5 + Math.random() * 4;
-    mob.position.set(Math.cos(angle)*dist, 0.5 + Math.random()*3.5, Math.sin(angle)*dist);
-    const scale = 0.7 + Math.random()*0.6;
-    mob.scale.multiplyScalar(scale);
-    mob.userData = { type: t, life: 0, vy: -0.3 - Math.random()*0.4, ay: 0, vrot: (Math.random()-0.5)*2 };
-    scene.add(mob);
-    mobs.push(mob);
+    if(!ready || !airship) return;
+    const r = Math.random();
+    let type, proto;
+    if(r < 0.55){ type='mail'; proto = mailbag; }
+    else if(r < 0.72){ type='gold'; proto = goldmail; }
+    else { type='storm'; proto = stormP; }
+    if(!proto) return;
+    const obj = proto.clone(true);
+    const x = -8 + Math.random()*16;
+    const y = 1.5 + Math.random()*5;
+    obj.position.set(x, y, -100);
+    obj.userData = { type, life:0, bob: Math.random()*Math.PI*2 };
+    scene.add(obj); mobs.push(obj);
 }
 
-const raycaster = new THREE.Raycaster();
-const pointer = new THREE.Vector2();
-
-function onTap(ev){
-    if(!gameRunning) return;
-    const r = canvas.getBoundingClientRect();
-    const x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left;
-    const y = (ev.touches ? ev.touches[0].clientY : ev.clientY) - r.top;
-    pointer.x = (x/r.width)*2 - 1;
-    pointer.y = -(y/r.height)*2 + 1;
-    raycaster.setFromCamera(pointer, camera);
-    const hits = raycaster.intersectObjects(mobs, true);
-    if(hits.length){
-        let root = hits[0].object;
-        while(root.parent && !mobs.includes(root)) root = root.parent;
-        const t = root.userData.type;
-        score += t.score;
-        document.getElementById('score').textContent = score;
-        showToast('+'+t.score);
-        // pop animation
-        const popDur = 0.25; const start = performance.now();
-        const initialScale = root.scale.x;
-        const popAnim = ()=>{
-            const e = (performance.now()-start)/1000/popDur;
-            if(e >= 1){ scene.remove(root); mobs = mobs.filter(m=>m!==root); return; }
-            root.scale.setScalar(initialScale * (1 + e*0.6));
-            root.position.y += 0.05;
-            root.traverse(o=>{ if(o.isMesh){ o.material.transparent=true; o.material.opacity = 1-e; }});
-            requestAnimationFrame(popAnim);
-        };
-        popAnim();
-    }
-}
-canvas.addEventListener('click', onTap);
-canvas.addEventListener('touchstart', (e)=>{ e.preventDefault(); onTap(e); }, {passive:false});
-
-function showToast(text){
-    const t = document.getElementById('toast');
-    t.textContent = text;
-    t.classList.add('show');
-    clearTimeout(t._h);
-    t._h = setTimeout(()=>t.classList.remove('show'), 600);
+function showCombo(t){
+    const c = document.getElementById('combo');
+    c.textContent = t; c.classList.add('show');
+    clearTimeout(c._h); c._h = setTimeout(()=>c.classList.remove('show'), 700);
 }
 
 function startGame(){
-    score = 0; timeLeft = CFG.duration; gameRunning = true;
-    document.getElementById('score').textContent = '0';
-    document.getElementById('time').textContent = timeLeft;
+    STATE.score=0; STATE.hp=3; STATE.distance=0; STATE.running=true; STATE.gameOver=false; STATE.time=0;
+    document.getElementById('score').textContent='0';
+    document.getElementById('hp').textContent='3';
+    document.getElementById('prog').style.width='0%';
     document.getElementById('banner').classList.add('hidden');
-    mobs.forEach(m=>scene.remove(m));
-    mobs = [];
-    lastSpawn = 0;
+    mobs.forEach(m=>scene.remove(m)); mobs=[];
+    targetY = 2;
+    if(shipObj) shipObj.position.set(-1, 2, 0);
 }
 
-function endGame(){
-    gameRunning = false;
-    document.getElementById('bannerBig').textContent = score;
+function endGame(arrived){
+    STATE.running=false; STATE.gameOver=true;
+    let best = STATE.score;
+    try { best = Math.max(STATE.score, +(localStorage.getItem('aa-best')||0)); localStorage.setItem('aa-best', best); } catch(e){}
+    document.getElementById('bannerBig').textContent = STATE.score;
+    document.getElementById('sMail').textContent = STATE.score;
+    document.getElementById('sDist').textContent = Math.min(100, Math.floor(STATE.distance/STATE.total*100)) + '%';
+    document.getElementById('sBest').textContent = best;
+    document.getElementById('resultMsg').textContent = arrived ? I18N[lang].arrived : I18N[lang].crash;
     document.getElementById('banner').classList.remove('hidden');
 }
 
 document.getElementById('restart').addEventListener('click', startGame);
 
-// Tick
-let tSec = 0;
+function moveAlt(d){
+    if(!STATE.running) return;
+    targetY = Math.max(0.5, Math.min(7.5, targetY + d));
+}
+document.getElementById('btnUp').addEventListener('click', ()=>moveAlt(1.4));
+document.getElementById('btnDn').addEventListener('click', ()=>moveAlt(-1.4));
+window.addEventListener('keydown', e=>{
+    if(e.key==='ArrowUp'||e.key==='w'||e.key==='W') moveAlt(1.4);
+    else if(e.key==='ArrowDown'||e.key==='s'||e.key==='S') moveAlt(-1.4);
+});
+let tStartY=null;
+canvas.addEventListener('touchstart', e=>{ tStartY = e.touches[0].clientY; }, {passive:true});
+canvas.addEventListener('touchend', e=>{
+    if(tStartY===null) return;
+    const dy = e.changedTouches[0].clientY - tStartY;
+    if(Math.abs(dy) > 30) moveAlt(dy<0 ? 1.4 : -1.4);
+    else moveAlt(e.changedTouches[0].clientY < window.innerHeight/2 ? 1.4 : -1.4);
+    tStartY = null;
+}, {passive:true});
+
+const clock = new THREE.Clock();
+let spawnT = 0;
+
 function animate(){
     requestAnimationFrame(animate);
     const dt = Math.min(clock.getDelta(), 0.05);
-    tSec += dt;
-    // ring pulse
-    ring.scale.setScalar(1 + 0.04*Math.sin(tSec*2));
-    // camera gentle orbit
-    const camR = 13;
-    camera.position.x = Math.sin(tSec*0.07) * camR * 0.3;
-    camera.position.z = camR + Math.cos(tSec*0.07) * 1.2;
-    camera.position.y = 4.5 + Math.sin(tSec*0.4)*0.4;
-    camera.lookAt(0, 1.4, 0);
+    if(!ready){ renderer.render(scene, camera); return; }
+    STATE.time += dt;
 
-    // spawn
-    if(gameRunning){
-        if(tSec - lastSpawn > (CFG.spawnInterval || 0.7)){
-            lastSpawn = tSec;
-            spawnMob();
-        }
-        // mob update
+    if(shipObj){
+        shipObj.position.y += (targetY - shipObj.position.y) * Math.min(1, dt*4);
+        shipObj.position.x = -1 + Math.sin(STATE.time*0.5)*0.20;
+        const rolled = (targetY - shipObj.position.y) * 0.18;
+        shipObj.rotation.z = rolled;
+        shipObj.rotation.y = Math.sin(STATE.time*0.3)*0.05;
+    }
+
+    if(STATE.running){
+        const v = 14 + STATE.time*0.05;
+        STATE.distance += v * dt;
+        document.getElementById('prog').style.width = Math.min(100, (STATE.distance/STATE.total)*100) + '%';
+        if(STATE.distance >= STATE.total){ endGame(true); }
+
+        spawnT -= dt;
+        if(spawnT <= 0){ spawnT = 0.55 + Math.random()*0.5; spawnMob(); }
+
         for(let i=mobs.length-1; i>=0; i--){
             const m = mobs[i];
+            m.position.z += v * dt;
             m.userData.life += dt;
-            m.position.y += m.userData.vy * dt;
-            m.rotation.y += m.userData.vrot * dt;
-            if(m.position.y < 0.2 || m.userData.life > 4){
-                scene.remove(m);
-                mobs.splice(i,1);
+            if(m.userData.type === 'storm'){
+                m.rotation.y += dt*0.7;
+                // lightning flicker
+                m.children[0].material.emissiveIntensity = (Math.sin(STATE.time*15+m.userData.bob)>0.7) ? 4 : 0;
+            } else {
+                m.position.y += Math.sin(STATE.time*2 + m.userData.bob)*0.01;
+                m.rotation.y += dt*1.5;
+            }
+            if(shipObj && m.position.z > -2 && m.position.z < 4){
+                const dx = m.position.x - shipObj.position.x;
+                const dy = m.position.y - shipObj.position.y;
+                if(Math.abs(dx) < 1.6 && Math.abs(dy) < 1.4){
+                    onHit(m); scene.remove(m); mobs.splice(i,1); continue;
+                }
+            }
+            if(m.position.z > 8){ scene.remove(m); mobs.splice(i,1); }
+        }
+
+        // backdrop scroll
+        for(const b of backdrop){
+            b.mesh.position.z += (b.type==='ship' ? v*0.4 : v*0.6) * dt;
+            if(b.mesh.position.z > 12){
+                b.mesh.position.z -= 240;
+                b.mesh.position.x = -30 + Math.random()*60;
             }
         }
-        // time
-        timeLeft -= dt;
-        if(timeLeft <= 0){
-            timeLeft = 0;
-            endGame();
-        }
-        document.getElementById('time').textContent = Math.ceil(timeLeft);
+        // ocean illusion
+        ocean.position.z = -200 + (STATE.time*v) % 50;
     }
+
+    camera.position.set(0 + (shipObj?shipObj.position.x*0.05:0), 2 + (shipObj?shipObj.position.y*0.10:0), 9);
+    camera.lookAt(0, shipObj?shipObj.position.y:1, 0);
+
     renderer.render(scene, camera);
 }
 animate();
 
-// resize
+function onHit(m){
+    if(m.userData.type === 'mail'){
+        STATE.score += 1;
+        document.getElementById('score').textContent = STATE.score;
+    } else if(m.userData.type === 'gold'){
+        STATE.score += 5;
+        document.getElementById('score').textContent = STATE.score;
+        showCombo('+5 ' + I18N[lang].gold);
+    } else { // storm
+        STATE.hp -= 1;
+        document.getElementById('hp').textContent = STATE.hp;
+        showCombo(I18N[lang].damage);
+        // flash
+        scene.background = new THREE.Color('#ffffff');
+        setTimeout(()=>{ scene.background = null; }, 100);
+        if(STATE.hp <= 0) endGame(false);
+    }
+}
+
 window.addEventListener('resize', ()=>{
     renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth/window.innerHeight;
-    camera.updateProjectionMatrix();
+    camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix();
 });
 
-// i18n
-let lang = 'ja';
+let lang='ja';
 function applyLang(){
     document.documentElement.lang = lang;
     document.querySelectorAll('[data-i18n]').forEach(el=>{
         const k = el.getAttribute('data-i18n');
-        if(I18N[lang] && I18N[lang][k]) el.textContent = I18N[lang][k];
+        if(I18N[lang][k]) el.textContent = I18N[lang][k];
     });
 }
-document.querySelectorAll('.lang-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-        lang = btn.dataset.lang;
-        document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active', b===btn));
-        applyLang();
-    });
-});
+document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click', ()=>{
+    lang = b.dataset.lang;
+    document.querySelectorAll('.lang-btn').forEach(x=>x.classList.toggle('active', x===b));
+    applyLang();
+}));
 applyLang();
+
+const checkReady = setInterval(()=>{ if(ready){ clearInterval(checkReady); startGame(); } }, 100);
 </script>
 </body>
 </html>
